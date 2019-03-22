@@ -24,26 +24,30 @@ class App extends Component {
       return;
     }
     const paras = {};
+    const extraData = {};
     valueLeft[1].split("&").map(t => {
       const b = t.split("=");
-      if (b[0] === "appId") {
-        paras.appId = b[1];
-      }
-      if (b[0] === "page") {
-        paras.path = b[1];
-      }
-      if (b[0] === "query") {
-        const c = decodeURIComponent(b[1]);
-        const ct = {};
-        c.split("&").map(v => {
-          const d = v.split("=");
-          ct[d[0]] = d[1];
-          return true;
-        });
-        paras.extraData = ct;
+      if (["appId", "page", "query"].includes(b[0])) {
+        if (b[0] === "appId") {
+          paras.appId = b[1];
+        }
+        if (b[0] === "page") {
+          paras.path = b[1];
+        }
+        if (b[0] === "query") {
+          const c = decodeURIComponent(b[1]);
+          c.split("&").map(v => {
+            const d = v.split("=");
+            extraData[d[0]] = d[1];
+            return true;
+          });
+        }
+      } else {
+        extraData[b[0]] = b[1];
       }
       return true;
     });
+    paras.extraData = extraData;
     this.setState({
       valueRight: "miniprogram://" + JSON.stringify(paras)
     });
